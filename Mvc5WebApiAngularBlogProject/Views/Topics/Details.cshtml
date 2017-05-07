@@ -1,0 +1,91 @@
+﻿@model Mvc5WebApiAngularBlogProject.Models.Topics
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="container-fluid backdrop-gradient">
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1 text-center">
+            <h2>@Html.DisplayFor(model => model.Name)</h2>
+            <hr />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1">
+            <h3>Blogs with this Topic</h3>
+            <hr />
+        </div>
+    </div>
+    @if (Model.Blogs.Count == 0)
+    {
+        <div class="row">
+            <div class="col-lg-10 col-lg-offset-1">
+                <h4>No posts are on this topic, Please select another one.</h4>
+                <hr />
+            </div>
+        </div>
+    }
+    @foreach (var item in Model.Blogs)
+    {
+        <div class="row">
+            <div class="col-lg-10 col-lg-offset-1">
+                <h4 style="font-family:Impact, Haettenschweiler, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif">@Html.ActionLink(item.Title, "Details", "BlogPosts", new { slug = item.Slug }, new { @class = "links" })</h4>
+            </div>
+        </div>
+        if (item.Body.Length > 150)
+        {
+            string truncBody = item.Body.Substring(0, 150) + "...</p>";
+            <div class="row text-left">
+                <div class="col-lg-10 col-lg-offset-1">
+                    @Html.Raw(truncBody)
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row text-left">
+                <div class="col-lg-10 col-lg-offset-1">
+                    @Html.Raw(item.Body)
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-lg-10 col-lg-offset-1">
+                <hr />
+            </div>
+        </div>
+    }
+    <div class="row">
+        <div class="col-lg-1 col-lg-offset-1">
+            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn links-btn" })
+        </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="col-lg-1 col-lg-offset-1">
+                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class="btn links-btn" })
+            </div>
+        }
+    </div>
+</div>
+
+@*<h2>Details</h2>
+
+    <div>
+        <h4>Topics</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>*@

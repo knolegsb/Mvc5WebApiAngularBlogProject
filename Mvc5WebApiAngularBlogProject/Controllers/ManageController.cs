@@ -13,6 +13,7 @@ namespace Mvc5WebApiAngularBlogProject.Controllers
     [Authorize]
     public class ManageController : Controller
     {
+        private ApplicationDbContext db = new ApplicationDbContext();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
@@ -128,6 +129,32 @@ namespace Mvc5WebApiAngularBlogProject.Controllers
                 await UserManager.SmsService.SendAsync(message);
             }
             return RedirectToAction("VerifyPhoneNumber", new { PhoneNumber = model.Number });
+        }
+
+        // GET: /Manage/ManageDisplayName
+        public ActionResult ManageDisplayName()
+        {
+            var user = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            return View(user);
+        }
+
+        //
+        // POST: /Manage/ManageDisplayName
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ManageDisplayName(ApplicationUser model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            // Add display name to database
+            var user = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            user.DisplayName = model.DisplayName;
+            db.Entry(user).Property("DisplayName").IsModified = true;
+            db.SaveChanges();
+
+            return RedirectToAction("Index", new { Message = ManageMessageId.UpdateDisplayNameSuccess });
         }
 
         //
@@ -381,6 +408,7 @@ namespace Mvc5WebApiAngularBlogProject.Controllers
             SetPasswordSuccess,
             RemoveLoginSuccess,
             RemovePhoneSuccess,
+            UpdateDisplayNameSuccess,
             Error
         }
 
